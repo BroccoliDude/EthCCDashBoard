@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EthCC[9] Events — Cannes 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #18181f;
+    --border: #2a2a3a;
+    --accent: #7b6ef6;
+    --accent2: #f06060;
+    --accent3: #4ecdc4;
+    --accent4: #ffd166;
+    --text: #e8e8f0;
+    --text-dim: #888899;
+    --vc: #b388ff;
+    --bd: #4fc3f7;
+    --mkt: #f06292;
+    --dev: #69f0ae;
+    --founder: #ffd54f;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Space Mono', monospace;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* HEADER */
+  .header {
+    position: relative;
+    padding: 60px 40px 40px;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(135deg, #0a0a0f 0%, #12101e 50%, #0a0a0f 100%);
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -60px; left: -60px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(123,110,246,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; right: 10%;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(78,205,196,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .header-grid {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 1;
+  }
+  .header-left h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(28px, 5vw, 52px);
+    font-weight: 800;
+    letter-spacing: -1px;
+    line-height: 1.05;
+    background: linear-gradient(135deg, #fff 30%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .header-left .subtitle {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-top: 8px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .header-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.18s;
+    border: none;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+  }
+  .btn-primary:hover { background: #9080ff; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(123,110,246,0.4); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+  .event-count-badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+
+  /* STATS BAR */
+  .stats-bar {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+  }
+  .stat-item {
+    flex: 1;
+    min-width: 120px;
+    padding: 20px 24px;
+    border-right: 1px solid var(--border);
+    text-align: center;
+  }
+  .stat-item:last-child { border-right: none; }
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--text);
+  }
+  .stat-label {
+    font-size: 10px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-top: 4px;
+  }
+
+  /* CONTROLS */
+  .controls {
+    padding: 20px 40px;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .search-wrap {
+    position: relative;
+    flex: 1;
+    min-width: 200px;
+  }
+  .search-wrap input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    padding: 10px 16px 10px 38px;
+    border-radius: 6px;
+    outline: none;
+    transition: border-color 0.18s;
+  }
+  .search-wrap input:focus { border-color: var(--accent); }
+  .search-wrap .search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-dim);
+    font-size: 14px;
+  }
+  .filter-group {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .filter-btn {
+    padding: 7px 14px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-dim);
+    font-family: 'Space Mono', monospace;
+    letter-spacing: 0.5px;
+    transition: all 0.15s;
+    text-transform: uppercase;
+  }
+  .filter-btn:hover, .filter-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .filter-btn.tag-vc.active { background: var(--vc); border-color: var(--vc); }
+  .filter-btn.tag-bd.active { background: var(--bd); border-color: var(--bd); }
+  .filter-btn.tag-mkt.active { background: var(--mkt); border-color: var(--mkt); }
+  .filter-btn.tag-dev.active { background: var(--dev); border-color: var(--dev); color: #111; }
+  .filter-btn.tag-founder.active { background: var(--founder); border-color: var(--founder); color: #111; }
+  select {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    outline: none;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* DAY TABS */
+  .day-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    padding: 0 40px;
+    background: var(--surface);
+  }
+  .day-tab {
+    padding: 14px 24px;
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    color: var(--text-dim);
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: all 0.15s;
+  }
+  .day-tab:hover { color: var(--text); }
+  .day-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .day-tab .count { 
+    display: inline-block;
+    background: var(--surface2);
+    border-radius: 10px;
+    padding: 1px 7px;
+    font-size: 10px;
+    margin-left: 6px;
+    color: var(--text-dim);
+  }
+
+  /* EVENTS GRID */
+  .main {
+    padding: 32px 40px;
+  }
+  .events-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 16px;
+  }
+  .event-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    transition: all 0.2s;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .event-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(123,110,246,0.15);
+  }
+  .event-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent3));
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .event-card:hover::before { opacity: 1; }
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .event-time {
+    font-size: 11px;
+    color: var(--accent3);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+  }
+  .status-badge {
+    font-size: 10px;
+    padding: 3px 9px;
+    border-radius: 3px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .status-sold-out { background: rgba(240,96,96,0.15); color: var(--accent2); border: 1px solid rgba(240,96,96,0.3); }
+  .status-waitlist { background: rgba(255,209,102,0.12); color: var(--accent4); border: 1px solid rgba(255,209,102,0.25); }
+  .status-approval { background: rgba(78,205,196,0.1); color: var(--accent3); border: 1px solid rgba(78,205,196,0.25); }
+  .status-request { background: rgba(123,110,246,0.1); color: var(--accent); border: 1px solid rgba(123,110,246,0.25); }
+  .status-closed { background: rgba(100,100,120,0.1); color: #666; border: 1px solid rgba(100,100,120,0.2); }
+  .status-open { background: rgba(105,240,174,0.1); color: var(--dev); border: 1px solid rgba(105,240,174,0.2); }
+  .event-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .event-organizer {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .event-location {
+    font-size: 11px;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 12px;
+  }
+  .tags-row {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+  .tag {
+    font-size: 9px;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .tag-vc { background: rgba(179,136,255,0.12); color: var(--vc); border: 1px solid rgba(179,136,255,0.25); }
+  .tag-bd { background: rgba(79,195,247,0.12); color: var(--bd); border: 1px solid rgba(79,195,247,0.25); }
+  .tag-mkt { background: rgba(240,98,146,0.12); color: var(--mkt); border: 1px solid rgba(240,98,146,0.25); }
+  .tag-dev { background: rgba(105,240,174,0.12); color: var(--dev); border: 1px solid rgba(105,240,174,0.25); }
+  .tag-founder { background: rgba(255,213,79,0.12); color: var(--founder); border: 1px solid rgba(255,213,79,0.25); }
+
+  .score-pill {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: 700;
+  }
+  .score-pill .score-label { color: var(--text-dim); }
+  .score-pill .score-val { color: var(--text); }
+  .card-footer {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .card-link {
+    font-size: 11px;
+    color: var(--accent);
+    text-decoration: none;
+    letter-spacing: 0.5px;
+    font-weight: 700;
+    transition: color 0.15s;
+  }
+  .card-link:hover { color: #9080ff; }
+  
+  .no-results {
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--text-dim);
+    grid-column: 1 / -1;
+  }
+  .no-results .icon { font-size: 48px; margin-bottom: 16px; }
+  .no-results h3 { font-family: 'Syne', sans-serif; font-size: 20px; margin-bottom: 8px; color: var(--text); }
+
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .event-card {
+    animation: fadeUp 0.3s ease both;
+  }
+
+  /* FOOTER */
+  .footer {
+    text-align: center;
+    padding: 32px;
+    border-top: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 11px;
+    letter-spacing: 1px;
+  }
+
+  @media (max-width: 600px) {
+    .header, .controls, .main { padding-left: 16px; padding-right: 16px; }
+    .day-tabs { padding: 0 16px; }
+    .events-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-grid">
+    <div class="header-left">
+      <h1>EthCC[9] Events</h1>
+      <div class="subtitle">🇫🇷 Cannes · Mar 28 – Apr 2, 2026</div>
+    </div>
+    <div class="header-actions">
+      <span class="event-count-badge" id="totalBadge">162 Events</span>
+      <button class="btn btn-primary" onclick="downloadXLSX()">⬇ Download Sheet</button>
+    </div>
+  </div>
+</div>
+
+<div class="stats-bar" id="statsBar"></div>
+
+<div class="controls">
+  <div class="search-wrap">
+    <span class="search-icon">⌕</span>
+    <input type="text" id="searchInput" placeholder="Search events, organizers..." oninput="render()">
+  </div>
+  <div class="filter-group" id="tagFilters">
+    <button class="filter-btn" data-tag="ALL" onclick="setTagFilter('ALL')" id="tagALL">All Tags</button>
+    <button class="filter-btn tag-vc" data-tag="VC" onclick="setTagFilter('VC')" id="tagVC">VC</button>
+    <button class="filter-btn tag-bd" data-tag="BD" onclick="setTagFilter('BD')" id="tagBD">BD</button>
+    <button class="filter-btn tag-mkt" data-tag="MKT" onclick="setTagFilter('MKT')" id="tagMKT">MKT</button>
+    <button class="filter-btn tag-dev" data-tag="DEV" onclick="setTagFilter('DEV')" id="tagDEV">DEV</button>
+    <button class="filter-btn tag-founder" data-tag="FOUNDER" onclick="setTagFilter('FOUNDER')" id="tagFOUNDER">Founder</button>
+  </div>
+  <select id="statusFilter" onchange="render()">
+    <option value="ALL">All Statuses</option>
+    <option value="Approval Required">Approval Required</option>
+    <option value="Waitlist">Waitlist</option>
+    <option value="Sold Out">Sold Out</option>
+    <option value="Request To Join">Request To Join</option>
+    <option value="Open">Open</option>
+    <option value="Closed">Closed</option>
+  </select>
+  <select id="sortBy" onchange="render()">
+    <option value="time">Sort: Time</option>
+    <option value="vc">Sort: VC Score</option>
+    <option value="bd">Sort: BD Score</option>
+    <option value="mkt">Sort: MKT Score</option>
+    <option value="dev">Sort: DEV Score</option>
+    <option value="founder">Sort: Founder Score</option>
+  </select>
+</div>
+
+<div class="day-tabs" id="dayTabs"></div>
+
+<div class="main">
+  <div class="events-grid" id="eventsGrid"></div>
+</div>
+
+<div class="footer">Last updated Mar 28, 2026 · Data sourced from Luma · EthCC[9] Cannes</div>
+
+<script>
+const EVENTS = [{"date": "Mar 28, 2026", "day": "Sat", "time": "9:00 AM", "end_time": "6:00 PM", "event_name": "👹 BEAST MODE | zkEVM / Ethproofs day (EthCC[9])", "organizer": "By Will Corcoran & Justin Drake & Fara Woolf & George K", "location": "X — shown upon approval", "status": "Sold Out", "link": "https://lu.ma/beast_mode", "tags": "BD, DEV", "VC_score": 0.0, "BD_score": 2.3, "MKT_score": 0.0, "DEV_score": 2.0, "FOUNDER_score": 0.0}, {"date": "Mar 28, 2026", "day": "Sat", "time": "11:00 AM", "end_time": "1:00 PM", "event_name": "Stablewatch Build Your Yield Stablecoin", "organizer": "By stablewatch", "location": "X — shown upon approval", "status": "Waitlist", "link": "https://lu.ma/b9vejskr", "tags": "DEV", "VC_score": 0.0, "BD_score": 1.0, "MKT_score": 0.0, "DEV_score": 2.0, "FOUNDER_score": 0.0}, {"date": "Mar 28, 2026", "day": "Sat", "time": "11:00 AM", "end_time": "", "event_name": "Rayls Hackathon #2 | EthCC, Cannes", "organizer": "By Rayls . & LimeChain", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/clx686yy", "tags": "DEV", "VC_score": 0.0, "BD_score": 1.5, "MKT_score": 0.0, "DEV_score": 3.0, "FOUNDER_score": 0.0}, {"date": "Mar 29, 2026", "day": "Sun", "time": "10:00 AM", "end_time": "6:00 PM", "event_name": "🏰 FORT MODE | post-quantum consensus (EthCC[9])", "organizer": "By Will Corcoran & Justin Drake & Ladislaus", "location": "X — shown upon approval", "status": "Sold Out", "link": "https://lu.ma/fort_mode", "tags": "BD", "VC_score": 0.0, "BD_score": 2.0, "MKT_score": 0.0, "DEV_score": 1.5, "FOUNDER_score": 0.0}, {"date": "Mar 29, 2026", "day": "Sun", "time": "11:00 AM", "end_time": "12:00 PM", "event_name": "AI InfoFi in Social Media: Shaping the Future of Web3", "organizer": "nan", "location": "nan", "status": "Approval Required", "link": "https://lu.ma/bpa98wyy", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 2.0, "MKT_score": 2.0, "DEV_score": 3.0, "FOUNDER_score": 0.0}, {"date": "Mar 29, 2026", "day": "Sun", "time": "12:00 PM", "end_time": "10:00 PM", "event_name": "Institutions Onchain", "organizer": "By Rayls . & LimeChain", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/xo9q6mw8", "tags": "DEV", "VC_score": 0.0, "BD_score": 1.0, "MKT_score": 0.0, "DEV_score": 2.0, "FOUNDER_score": 0.0}, {"date": "Mar 29, 2026", "day": "Sun", "time": "12:30 PM", "end_time": "5:30 PM", "event_name": "Sunday Padel Club with Keyrock and Maven 11", "organizer": "By Keyrock", "location": "X — shown upon approval", "status": "Sold Out", "link": "https://lu.ma/5jdfpwb4", "tags": "BD", "VC_score": 0.0, "BD_score": 2.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Mar 29, 2026", "day": "Sun", "time": "5:00 PM", "end_time": "8:00 PM", "event_name": "Cannes Pre-Launch Soirée: European Ethereum Institute", "organizer": "By European Ethereum Institute & Luz & Josef Jelacic", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/2x0p1xk8", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 3.0, "MKT_score": 2.5, "DEV_score": 2.0, "FOUNDER_score": 0.0}, {"date": "Mar 29, 2026", "day": "Sun", "time": "6:00 PM", "end_time": "10:00 PM", "event_name": "Investors Meetup by Hybrid Capital", "organizer": "By Hybrid Capital", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/dw4tlcbm", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 3.5, "BD_score": 3.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Mar 29, 2026", "day": "Sun", "time": "6:30 PM", "end_time": "8:30 PM", "event_name": "Onchain Dev City @EthCC[9] Cannes 2026🇫🇷", "organizer": "By Capvise Group & Sahil (TG:@sahilxdev)", "location": "🌆 Onchain Street - entry arch + immersive check-in + city soundscape", "status": "Approval Required", "link": "https://lu.ma/t1vl58rj", "tags": "BD, DEV", "VC_score": 0.0, "BD_score": 2.5, "MKT_score": 0.0, "DEV_score": 7.0, "FOUNDER_score": 0.0}, {"date": "Mar 30, 2026", "day": "Mon", "time": "7:30 AM", "end_time": "8:30 AM", "event_name": "Proof of Run 5K | EthCC9 Cannes 🇫🇷", "organizer": "nan", "location": "nan", "status": "Open", "link": "https://lu.ma/Proof-of-Run-Cannes-Everstake", "tags": "DEV", "VC_score": 0.0, "BD_score": 1.5, "MKT_score": 0.0, "DEV_score": 2.0, "FOUNDER_score": 0.0}, {"date": "Mar 30, 2026", "day": "Mon", "time": "8:00 AM", "end_time": "9:30 AM", "event_name": "Cover the Distance 5K | EthCC Cannes 🇫🇷", "organizer": "By OpenCover & George Harris", "location": "nan", "status": "Open", "link": "https://lu.ma/kew6cty3", "tags": "BD", "VC_score": 0.0, "BD_score": 3.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Mar 30, 2026", "day": "Mon", "time": "8:00 AM", "end_time": "11:00 AM", "event_name": "Coffee On Us ☕ | Espresso & Celo at EthCC", "organizer": "By Espresso Systems & Celo Foundation", "location": "nan", "status": "Approval Required", "link": "https://lu.ma/coffeeonusethcc", "tags": "BD", "VC_score": 0.0, "BD_score": 2.5, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Mar 30, 2026", "day": "Mon", "time": "8:30 AM", "end_time": "12:30 PM", "event_name": "Policy Roundtable: Token Taxonomy & Banking Under MiCA", "organizer": "nan", "location": "Classification challenges under MiCA", "status": "Approval Required", "link": "https://lu.ma/bbeia0bm", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 2.0, "MKT_score": 0.0, "DEV_score": 1.2, "FOUNDER_score": 0.0}, {"date": "Mar 30, 2026", "day": "Mon", "time": "9:00 AM", "end_time": "", "event_name": "Everything you can do on Ethereum - privately.", "organizer": "By Aztec", "location": "nan", "status": "Open", "link": "https://lu.ma/8cbu5xl8", "tags": "DEV", "VC_score": 0.0, "BD_score": 1.0, "MKT_score": 0.0, "DEV_score": 2.0, "FOUNDER_score": 0.0}, {"date": "Mar 30, 2026", "day": "Mon", "time": "9:00 AM", "end_time": "10:30 AM", "event_name": "Street Workout with Stablewatch", "organizer": "By stablewatch", "location": "Street Workout Park Cannes", "status": "Approval Required", "link": "https://lu.ma/wur1xgcx", "tags": "BD", "VC_score": 0.0, "BD_score": 2.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Mar 30, 2026", "day": "Mon", "time": "9:00 AM", "end_time": "12:00 PM", "event_name": "Builders Breakfast: Canton x Zenith", "organizer": "By Julia Suontama & Thomas | Canton Foundation & Canton | Anney", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/ggqo4xvm", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 2.0, "MKT_score": 0.0, "DEV_score": 2.0, "FOUNDER_score": 0.0}, {"date": "Mar 30, 2026", "day": "Mon", "time": "9:30 AM", "end_time": "5:30 PM", "event_name": "TokenizeThis Cannes 2026", "organizer": "By TokenizeThis & RedStone & Kinga Sojka", "location": "Hotel Barrière Le Majestic Cannes", "status": "Approval Required", "link": "https://lu.ma/3mg97043", "tags": "BD", "VC_score": 0.0, "BD_score": 2.0, "MKT_score": 0.0, "DEV_score": 1.2, "FOUNDER_score": 0.0}, {"date": "Mar 30, 2026", "day": "Mon", "time": "10:00 AM", "end_time": "12:00 PM", "event_name": "Cryptography & Compute Cafe @ EthCC Cannes", "organizer": "By Isaiah Soto & Dion Guillaume & Min H. Kim (TG: @therealminkim) & Rushil Suri", "location": "nan", "status": "Open", "link": "https://lu.ma/3olk6nlk", "tags": "BD, DEV", "VC_score": 0.0, "BD_score": 2.5, "MKT_score": 0.0, "DEV_score": 2.0, "FOUNDER_score": 0.0}, {"date": "Mar 30, 2026", "day": "Mon", "time": "10:00 AM", "end_time": "", "event_name": "Think You Ship Secure Code? Prove It.", "organizer": "By Veridise", "location": "Green Floor WAGMI Boulevard", "status": "Open", "link": "https://lu.ma/ujg2c57u", "tags": "DEV", "VC_score": 0.0, "BD_score": 0.0, "MKT_score": 0.0, "DEV_score": 2.0, "FOUNDER_score": 0.0}, {"date": "Mar 30, 2026", "day": "Mon", "time": "10:00 AM", "end_time": "", "event_name": "Web3 Marketing Hackathon #4", "organizer": "By Web3 Marketing Hackathon & Alexandra Nicorici", "location": "X — shown upon approval", "status": "Request To Join", "link": "https://lu.ma/xv4gj2s0", "tags": "MKT, DEV", "VC_score": 0.0, "BD_score": 1.0, "MKT_score": 2.5, "DEV_score": 5.0, "FOUNDER_score": 0.0}, {"date": "Mar 30, 2026", "day": "Mon", "time": "11:00 AM", "end_time": "2:00 PM", "event_name": "ETH CC 9 Founders & Investors Brunch ✨ (invite only)", "organizer": "By Rime Salmi & fractl & 📈Tim Web3", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/o7icgo88", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 2.5, "BD_score": 2.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 3.8}, {"date": "Mar 30, 2026", "day": "Mon", "time": "11:00 AM", "end_time": "1:00 PM", "event_name": "Breakfast with friends by Masterkey VC", "organizer": "By Amit Shilo - Masterkey.vc & Saul (Shauli) Rejwan", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/vtkh3515", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 3.0, "BD_score": 2.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Mar 30, 2026", "day": "Mon", "time": "11:00 AM", "end_time": "7:00 PM", "event_name": "DeFi Day Cannes", "organizer": "nan", "location": "nan", "status": "Open", "link": "https://lu.ma/defidaycannes", "tags": "DEV", "VC_score": 0.0, "BD_score": 1.8, "MKT_score": 0.0, "DEV_score": 2.0, "FOUNDER_score": 0.0}, {"date": "Mar 30, 2026", "day": "Mon", "time": "11:30 AM", "end_time": "", "event_name": "GM Podcast @ EthCC", "organizer": "By Genzio Media", "location": "nan", "status": "Approval Required", "link": "https://lu.ma/wasitfpj", "tags": "MKT", "VC_score": 0.0, "BD_score": 1.5, "MKT_score": 2.8, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Mar 30, 2026", "day": "Mon", "time": "1:00 PM", "end_time": "8:30 PM", "event_name": "TezDev 2026", "organizer": "By Tezos", "location": "nan", "status": "Approval Required", "link": "https://lu.ma/tezdev-2026", "tags": "DEV", "VC_score": 0.0, "BD_score": 0.0, "MKT_score": 0.0, "DEV_score": 2.0, "FOUNDER_score": 0.0}, {"date": "Mar 30, 2026", "day": "Mon", "time": "1:00 PM", "end_time": "3:30 PM", "event_name": "IYKYK @ EthCC", "organizer": "By * waverlymaven *", "location": "nan", "status": "Open", "link": "https://lu.ma/y9dpid6i", "tags": "BD", "VC_score": 0.0, "BD_score": 2.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Mar 30, 2026", "day": "Mon", "time": "2:00 PM", "end_time": "7:00 PM", "event_name": "ORAK CANNES - Private Institutional Summit", "organizer": "By Maxence & Prune & Abigail", "location": "Casino Barriere Le Croisette", "status": "Approval Required", "link": "https://lu.ma/as36dn76", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 2.5, "BD_score": 2.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.8}, {"date": "Mar 30, 2026", "day": "Mon", "time": "2:00 PM", "end_time": "3:30 PM", "event_name": "Free Cannes Walking Tour with Ambire", "organizer": "By Ambire & Ivan Manchev & Nadia | Ambire & Cinesius [Ambire Wallet]", "location": "nan", "status": "Approval Required", "link": "https://lu.ma/yf25oe36", "tags": "BD", "VC_score": 0.0, "BD_score": 2.3, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Mar 30, 2026", "day": "Mon", "time": "2:00 PM", "end_time": "6:00 PM", "event_name": "REAL UP CANNES_Where Blockchain Meet AI", "organizer": "By Ant Digital Technologies", "location": "X — shown upon approval", "status": "Closed", "link": "https://lu.ma/kkrhfmgc", "tags": "DEV", "VC_score": 0.0, "BD_score": 1.0, "MKT_score": 0.0, "DEV_score": 3.0, "FOUNDER_score": 0.0}, {"date": "Mar 30, 2026", "day": "Mon", "time": "2:00 PM", "end_time": "6:00 PM", "event_name": "Ammalgam x Utila Go-Karting at EthCC (9) 🏎", "organizer": "By Ammalgam & Alexander Royle & Will & Lynn", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/rmwr49fo", "tags": "BD", "VC_score": 0.0, "BD_score": 3.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Mar 30, 2026", "day": "Mon", "time": "3:00 PM", "end_time": "7:00 PM", "event_name": "🦞 OpenClaw Lobster Cave with Nazaré Ventures, TON, Safe4 & Ogment", "organizer": "By Bryn Bennett & Hacken & Steven Waterhouse", "location": "X — shown upon approval", "status": "Open", "link": "https://lu.ma/wvftim9o", "tags": "VC", "VC_score": 2.5, "BD_score": 0.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Mar 30, 2026", "day": "Mon", "time": "3:00 PM", "end_time": "5:00 PM", "event_name": "ETH CC 9 VCs & LPs Cocktail Hour✨ (invite only)", "organizer": "By Rime Salmi & fractl", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/jiy91q0e", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 2.5, "BD_score": 2.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.8}, {"date": "Mar 30, 2026", "day": "Mon", "time": "5:00 PM", "end_time": "8:00 PM", "event_name": "ETHCC Sunset Social", "organizer": "nan", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/vd8rzyc8", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 2.5, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Mar 30, 2026", "day": "Mon", "time": "5:00 PM", "end_time": "6:00 PM", "event_name": "Dappnode + Shutter: Threshold Encryption Running Club", "organizer": "By Pol Lanski & Chuy Garcia & Shutter & Loring Harkness", "location": "Briefing of the threshold encryption running challenge!", "status": "Open", "link": "https://lu.ma/6syd535p", "tags": "BD", "VC_score": 0.0, "BD_score": 2.0, "MKT_score": 0.0, "DEV_score": 1.5, "FOUNDER_score": 0.0}, {"date": "Mar 30, 2026", "day": "Mon", "time": "5:30 PM", "end_time": "8:30 PM", "event_name": "Institutional DeFi Cocktail EthCC Cannes SCRYPT x FunFair Ventures", "organizer": "By SCRYPT & Caroline Bansraj & Maria & Ettie Ward", "location": "If you’d like, you can join the waitlist.", "status": "Waitlist", "link": "https://lu.ma/ij4jj38o", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 5.0, "BD_score": 4.5, "MKT_score": 0.0, "DEV_score": 2.0, "FOUNDER_score": 0.0}, {"date": "Mar 30, 2026", "day": "Mon", "time": "6:00 PM", "end_time": "9:00 PM", "event_name": "🇫🇷 ETHCC Château Happy Hour w/ Halborn, Guardrail, Orbs, iExec & Rootstock Collective 🥂", "organizer": "By Halborn & RootstockCollective & iExec & Guardrail", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/ethcc26", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 3.5, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Mar 30, 2026", "day": "Mon", "time": "6:00 PM", "end_time": "9:00 PM", "event_name": "Wine & Web3", "organizer": "By Hacken & Bryn Bennett", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/us2f37l6", "tags": "BD, DEV", "VC_score": 0.0, "BD_score": 2.0, "MKT_score": 0.0, "DEV_score": 2.0, "FOUNDER_score": 0.0}, {"date": "Mar 30, 2026", "day": "Mon", "time": "6:00 PM", "end_time": "11:00 PM", "event_name": "Builder Nights Cannes | MetaMask Ondo Monad ChangeNOW Fhenix Stellar ETHGas CoinFello SWC Paribu SQD Somnia Bermuda Summ iExec CoW Swap", "organizer": "By Francesco Andreoli 🦊 & Consensys", "location": "X — shown upon approval", "status": "Sold Out", "link": "https://lu.ma/bnethcc", "tags": "DEV", "VC_score": 0.0, "BD_score": 0.8, "MKT_score": 0.0, "DEV_score": 2.0, "FOUNDER_score": 0.0}, {"date": "Mar 30, 2026", "day": "Mon", "time": "6:00 PM", "end_time": "9:00 PM", "event_name": "UEB3 Aperitivo & Champagne", "organizer": "By Stefani Todorova & Viktor Uzunov", "location": "If you’d like, you can join the waitlist.", "status": "Waitlist", "link": "https://lu.ma/ln0o0pei", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 0.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Mar 30, 2026", "day": "Mon", "time": "6:00 PM", "end_time": "8:30 PM", "event_name": "Art After Dark: TezDev", "organizer": "By Art on Tezos & Tezos", "location": "A 360° art show takes over Hotel Martinez during TezDev 2026.", "status": "Open", "link": "https://lu.ma/art-after-dark-tezdev", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 0.8, "MKT_score": 0.0, "DEV_score": 2.0, "FOUNDER_score": 0.0}, {"date": "Mar 30, 2026", "day": "Mon", "time": "6:00 PM", "end_time": "10:00 PM", "event_name": "Founder x VC Happy Hour @ ETHCC [9] 2026 🇫🇷", "organizer": "By BackersStage Capital & Atharv", "location": "X — shown upon approval", "status": "Request To Join", "link": "https://lu.ma/lqm55oiv", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 4.0, "BD_score": 3.5, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 3.0}, {"date": "Mar 30, 2026", "day": "Mon", "time": "6:30 PM", "end_time": "10:00 PM", "event_name": "The Circle by P2P.org, Fireblocks & AMINA", "organizer": "By P2P.org & Maria Zenner", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/TheCircle_Cannes", "tags": "BD", "VC_score": 0.0, "BD_score": 2.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Mar 30, 2026", "day": "Mon", "time": "6:30 PM", "end_time": "10:30 PM", "event_name": "Cannes After Hours: A Rooftop Happy Hour with SG-Forge, Bitvavo, Ripple and Flowdesk", "organizer": "By SOPHIE FILLET", "location": "X — shown upon approval", "status": "Request To Join", "link": "https://lu.ma/EthCCCannes2026", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 3.8, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Mar 30, 2026", "day": "Mon", "time": "6:30 PM", "end_time": "1:00 AM", "event_name": "Team1 Connect EthCC, Cannes", "organizer": "By Antoine Morand & Team1 & Kriddo & Gauthier Leonard", "location": "OKKO HOTELS Cannes Center", "status": "Approval Required", "link": "https://lu.ma/z677x48j", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 2.5, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Mar 30, 2026", "day": "Mon", "time": "7:00 PM", "end_time": "9:00 PM", "event_name": "Good Move | Squid", "organizer": "By Squid", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/rcwszi3b", "tags": "BD", "VC_score": 0.0, "BD_score": 2.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Mar 30, 2026", "day": "Mon", "time": "7:00 PM", "end_time": "11:30 PM", "event_name": "OKX Creators Dinner", "organizer": "By OKX France", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/37wojmrk", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 2.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Mar 30, 2026", "day": "Mon", "time": "7:30 PM", "end_time": "10:00 PM", "event_name": "EthCC[9] Consensus on the Coast: A Curated Dinner for Founders & VCs", "organizer": "By * waverlymaven *", "location": "nan", "status": "Sold Out", "link": "https://lu.ma/bi4xfxuz", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 3.5, "MKT_score": 0.0, "DEV_score": 1.5, "FOUNDER_score": 3.0}, {"date": "Mar 30, 2026", "day": "Mon", "time": "9:30 PM", "end_time": "2:00 AM", "event_name": "OKX Opening Party - EthCC Cannes 🇫🇷", "organizer": "By OKX France", "location": "• Venue: Chrystie Club, 22 Rue Macé, Cannes", "status": "Approval Required", "link": "https://lu.ma/km6b87bw", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 1.5, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Mar 31, 2026", "day": "Tue", "time": "8:00 AM", "end_time": "9:00 AM", "event_name": "Arbitrum DAO Morning Run (powered by Certora)", "organizer": "By Tekrox.eth & Certora", "location": "Runners will also have a chance to snag some 🔥 running merch along the way.", "status": "Open", "link": "https://lu.ma/kv6ur67u", "tags": "BD, DEV", "VC_score": 0.0, "BD_score": 3.3, "MKT_score": 0.0, "DEV_score": 2.0, "FOUNDER_score": 0.0}, {"date": "Mar 31, 2026", "day": "Tue", "time": "8:00 AM", "end_time": "9:00 AM", "event_name": "The LFG Street Workout", "organizer": "By fricoben", "location": "Street Workout Park Cannes", "status": "Open", "link": "https://lu.ma/65tyhrx7", "tags": "BD", "VC_score": 0.0, "BD_score": 2.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Mar 31, 2026", "day": "Tue", "time": "8:30 AM", "end_time": "", "event_name": "Run & Brunch hosted by Ledger x Mercuryo x Velora", "organizer": "By Ledger & Jaro Popowic & Cristina Manea & MAR", "location": "nan", "status": "Approval Required", "link": "https://lu.ma/7ndxacgi", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 3.5, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Mar 31, 2026", "day": "Tue", "time": "8:30 AM", "end_time": "11:30 AM", "event_name": "Scaling Onchain Finance for Real Money", "organizer": "By The Big Whale", "location": "X — shown upon approval", "status": "Waitlist", "link": "https://lu.ma/thebigwhale-ethcc", "tags": "DEV", "VC_score": 0.0, "BD_score": 1.0, "MKT_score": 0.0, "DEV_score": 3.5, "FOUNDER_score": 1.5}, {"date": "Mar 31, 2026", "day": "Tue", "time": "8:30 AM", "end_time": "11:00 AM", "event_name": "Institutional Bitcoin Breakfast with RootstockLabs and Tyr Capital", "organizer": "By Rootstock & Tyr Capital", "location": "X — shown upon approval", "status": "Waitlist", "link": "https://lu.ma/1ts8ldgs", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 3.5, "BD_score": 3.0, "MKT_score": 0.0, "DEV_score": 2.0, "FOUNDER_score": 0.0}, {"date": "Mar 31, 2026", "day": "Tue", "time": "9:00 AM", "end_time": "1:00 PM", "event_name": "Pharos X Faroo Breakfast Networking", "organizer": "By Jasmine & Jerry Web3 & Michelle Kang & Pharos Network", "location": "X — shown upon approval", "status": "Sold Out", "link": "https://lu.ma/gm76qw4w", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 5.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Mar 31, 2026", "day": "Tue", "time": "9:00 AM", "end_time": "7:00 PM", "event_name": "Real-World Asset Summit Cannes 2026", "organizer": "nan", "location": "nan", "status": "Closed", "link": "https://lu.ma/37gku8uk", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 2.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Mar 31, 2026", "day": "Tue", "time": "9:00 AM", "end_time": "11:00 AM", "event_name": "The Founders Circle - Morning Coffee by Frachtis X Virtuals Protocol", "organizer": "By Frachtis VC & Hananyss & Umeir & Virtuals Protocol", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/x6ubh19t", "tags": "VC, FOUNDER", "VC_score": 3.0, "BD_score": 1.8, "MKT_score": 0.0, "DEV_score": 1.5, "FOUNDER_score": 3.0}, {"date": "Mar 31, 2026", "day": "Tue", "time": "9:30 AM", "end_time": "5:15 PM", "event_name": "Blockspace Forum Cannes", "organizer": "By wildcatter [tg:@walkeen] & Drew Van der Werff & Kubi Mensah & Michael Moser", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/blockspaceforum", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 2.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Mar 31, 2026", "day": "Tue", "time": "10:00 AM", "end_time": "1:00 PM", "event_name": "Blockchain for Good @EthCC[9]", "organizer": "By Blockchain for Good & The Good Token Society & Aouatef & Malik Lakoubay (RadicalxChange)", "location": "nan", "status": "Open", "link": "https://lu.ma/bi43nw0b", "tags": "BD, DEV", "VC_score": 0.0, "BD_score": 2.5, "MKT_score": 0.0, "DEV_score": 2.0, "FOUNDER_score": 0.0}, {"date": "Mar 31, 2026", "day": "Tue", "time": "10:00 AM", "end_time": "5:00 PM", "event_name": "STARK Café", "organizer": "By StarkWare & Starknet Foundation", "location": "If you’d like, you can join the waitlist.", "status": "Waitlist", "link": "https://lu.ma/v31avys0", "tags": "BD", "VC_score": 0.0, "BD_score": 2.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Mar 31, 2026", "day": "Tue", "time": "10:00 AM", "end_time": "6:00 PM", "event_name": "WalletCon Cannes 2026", "organizer": "By WalletConnect & Turnkey & RootstockCollective", "location": "X — shown upon approval", "status": "Open", "link": "https://lu.ma/walletcon_cannes", "tags": "DEV", "VC_score": 0.0, "BD_score": 0.0, "MKT_score": 0.0, "DEV_score": 2.0, "FOUNDER_score": 0.0}, {"date": "Mar 31, 2026", "day": "Tue", "time": "10:00 AM", "end_time": "6:00 PM", "event_name": "Searcher 2026: Market Making, MEV and Exchanges in 2026", "organizer": "By 0xTaker & Damian & TPLUS CX & markus", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/8m8tpprs", "tags": "MKT", "VC_score": 0.0, "BD_score": 0.0, "MKT_score": 2.5, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Mar 31, 2026", "day": "Tue", "time": "10:00 AM", "end_time": "4:30 PM", "event_name": "TERSE at EthCC", "organizer": "nan", "location": "nan", "status": "Open", "link": "https://lu.ma/sq4gdmxq", "tags": "BD", "VC_score": 0.0, "BD_score": 2.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Mar 31, 2026", "day": "Tue", "time": "10:00 AM", "end_time": "12:00 PM", "event_name": "Zero Noise Yoga with 0G", "organizer": "By 0G Foundation", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/0g_yoga_ethcc", "tags": "BD", "VC_score": 0.0, "BD_score": 2.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Mar 31, 2026", "day": "Tue", "time": "10:00 AM", "end_time": "2:00 PM", "event_name": "DeFi Lounge at EthCC", "organizer": "By Stellar Development Foundation", "location": "Le Bar Du Gray", "status": "Approval Required", "link": "https://lu.ma/defilounge", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 3.5, "MKT_score": 0.0, "DEV_score": 2.0, "FOUNDER_score": 0.0}, {"date": "Mar 31, 2026", "day": "Tue", "time": "10:00 AM", "end_time": "", "event_name": "xStocks Hackathon: Market Open", "organizer": "By Kraken", "location": "X — shown upon approval", "status": "Waitlist", "link": "https://lu.ma/xstocks-hackathon", "tags": "MKT, DEV", "VC_score": 0.0, "BD_score": 0.0, "MKT_score": 2.5, "DEV_score": 3.0, "FOUNDER_score": 0.0}, {"date": "Mar 31, 2026", "day": "Tue", "time": "11:00 AM", "end_time": "7:00 PM", "event_name": "Lido Day @ EthCC9 Cannes", "organizer": "nan", "location": "nan", "status": "Approval Required", "link": "https://lu.ma/LidoDay-EthCC9", "tags": "BD", "VC_score": 0.0, "BD_score": 2.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Mar 31, 2026", "day": "Tue", "time": "11:00 AM", "end_time": "1:00 PM", "event_name": "Breakfast with friends by Masterkey VC", "organizer": "By Amit Shilo - Masterkey.vc & Saul (Shauli) Rejwan", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/5mixdy45", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 3.0, "BD_score": 2.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Mar 31, 2026", "day": "Tue", "time": "12:00 PM", "end_time": "5:00 PM", "event_name": "Encryption Lab", "organizer": "By Fhenix ‎ & Radhika Rungta & Vana", "location": "nan", "status": "Approval Required", "link": "https://lu.ma/9ft7s880", "tags": "DEV", "VC_score": 0.0, "BD_score": 0.0, "MKT_score": 0.0, "DEV_score": 3.0, "FOUNDER_score": 0.0}, {"date": "Mar 31, 2026", "day": "Tue", "time": "1:00 PM", "end_time": "5:00 PM", "event_name": "Quantstamp x Zircuit Present The Secret Garden | ETHCC 2026", "organizer": "By Zircuit & Quantstamp", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/ethccsecretgarden", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 2.3, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Mar 31, 2026", "day": "Tue", "time": "1:00 PM", "end_time": "4:00 PM", "event_name": "🦞 OpenClaw Onchain Meetup | Seaside Villa 🌊", "organizer": "By 0G Foundation", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/openclaw-onchainai", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 4.8, "MKT_score": 0.0, "DEV_score": 2.0, "FOUNDER_score": 0.0}, {"date": "Mar 31, 2026", "day": "Tue", "time": "4:00 PM", "end_time": "6:00 PM", "event_name": "Private SunDAO: Investors Speed Dating @ EthCC", "organizer": "By SunDAO Ventures & Chris Zhong & Daiana Marculescu", "location": "X — shown upon approval", "status": "Open", "link": "https://lu.ma/0wkcvzmv", "tags": "VC", "VC_score": 5.0, "BD_score": 1.5, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.8}, {"date": "Mar 31, 2026", "day": "Tue", "time": "3:00 PM", "end_time": "6:00 PM", "event_name": "Bingo, Networking & Spritz (EthCC[9])", "organizer": "By Banxe & Woof Software", "location": "O’Key Beach - Restaurant Plage", "status": "Approval Required", "link": "https://lu.ma/gd3l90p3", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 4.5, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Mar 31, 2026", "day": "Tue", "time": "4:00 PM", "end_time": "10:00 PM", "event_name": "Proof of Liquidity | by Yield Network & Ink", "organizer": "By Yield Network & Ink Foundation & Funders VC & DIA", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/yc8j7c70", "tags": "VC, BD, DEV", "VC_score": 4.5, "BD_score": 3.0, "MKT_score": 0.0, "DEV_score": 4.0, "FOUNDER_score": 0.0}, {"date": "Mar 31, 2026", "day": "Tue", "time": "4:00 PM", "end_time": "7:00 PM", "event_name": "DeFi and EU Policy Goals: Fit or Friction? - EthCC DeFi Regulatory Roundtable", "organizer": "By Blockchain for Europe", "location": "X — shown upon approval", "status": "Closed", "link": "https://lu.ma/umf4uwjg", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 4.5, "MKT_score": 0.0, "DEV_score": 2.0, "FOUNDER_score": 0.0}, {"date": "Mar 31, 2026", "day": "Tue", "time": "4:00 PM", "end_time": "8:00 PM", "event_name": "Scaling DeFi: Cannes Edition", "organizer": "By KPK", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/ae8v6ayn", "tags": "DEV", "VC_score": 0.0, "BD_score": 1.0, "MKT_score": 0.0, "DEV_score": 3.5, "FOUNDER_score": 1.5}, {"date": "Mar 31, 2026", "day": "Tue", "time": "4:00 PM", "end_time": "8:00 PM", "event_name": "Mezo Devs Rooftop Happy Hour", "organizer": "By Mezo & Encode Club", "location": "Five Seas Hotel Cannes", "status": "Open", "link": "https://lu.ma/68xoxztv", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 3.0, "MKT_score": 0.0, "DEV_score": 3.0, "FOUNDER_score": 0.0}, {"date": "Mar 31, 2026", "day": "Tue", "time": "4:00 PM", "end_time": "8:00 PM", "event_name": "La Lumière w/ Wirex, Privy & Bridge", "organizer": "By Privy & Daniel Rowlands", "location": "X — shown upon approval", "status": "Waitlist", "link": "https://lu.ma/3htvijku", "tags": "BD", "VC_score": 0.0, "BD_score": 2.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Mar 31, 2026", "day": "Tue", "time": "4:30 PM", "end_time": "8:00 PM", "event_name": "Occupy EthCC", "organizer": "By Mykola x Web3Privacy now & Migle R & Womxn in web3 Privacy & Peter Farbey", "location": "nan", "status": "Open", "link": "https://lu.ma/l3hxaaii", "tags": "BD", "VC_score": 0.0, "BD_score": 2.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Mar 31, 2026", "day": "Tue", "time": "4:30 PM", "end_time": "7:00 PM", "event_name": "NEAR Intents Happy Hour @ EthCC", "organizer": "By NEAR Foundation", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/qf4zlad5", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 3.5, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Mar 31, 2026", "day": "Tue", "time": "5:00 PM", "end_time": "9:00 PM", "event_name": "Build X: Agentic Happy Hour EthCC[9]", "organizer": "By OKX Developers & X Layer", "location": "Aave", "status": "Approval Required", "link": "https://lu.ma/okxethcc26", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 3.5, "MKT_score": 0.0, "DEV_score": 3.0, "FOUNDER_score": 0.0}, {"date": "Mar 31, 2026", "day": "Tue", "time": "5:00 PM", "end_time": "7:00 PM", "event_name": "Cinq à Sèpt with Stellar, Hype, and WalletCon", "organizer": "By Refraction | IRL & Stellar Development Foundation & Hype & WalletConnect", "location": "nan", "status": "Approval Required", "link": "https://lu.ma/vvqz0b0w", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 0.0, "MKT_score": 0.0, "DEV_score": 2.0, "FOUNDER_score": 0.0}, {"date": "Mar 31, 2026", "day": "Tue", "time": "5:00 PM", "end_time": "8:00 PM", "event_name": "Meet the Somnia team in Person to discuss The Agentic Future", "organizer": "By Somnia & Amr & Nika & Chaula Bherti", "location": "nan", "status": "Request To Join", "link": "https://lu.ma/b9qxw2jy", "tags": "BD", "VC_score": 0.0, "BD_score": 2.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.8}, {"date": "Mar 31, 2026", "day": "Tue", "time": "6:00 PM", "end_time": "10:00 PM", "event_name": "SunDAO: Investors & Builders Mixer @ EthCC", "organizer": "By SunDAO Ventures", "location": "X — shown upon approval", "status": "Sold Out", "link": "https://lu.ma/r71low6s", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 5.0, "BD_score": 4.5, "MKT_score": 0.0, "DEV_score": 2.0, "FOUNDER_score": 0.0}, {"date": "Mar 31, 2026", "day": "Tue", "time": "5:30 PM", "end_time": "9:30 PM", "event_name": "Allez, c'est l'heure de l'apéro", "organizer": "By Alex BertoG", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/272wxme3", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 0.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Mar 31, 2026", "day": "Tue", "time": "5:30 PM", "end_time": "8:30 PM", "event_name": "After Hours with Rain & Turnkey", "organizer": "nan", "location": "If you’d like, you can join the waitlist.", "status": "Waitlist", "link": "https://lu.ma/3ngkor0o", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 0.8, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Mar 31, 2026", "day": "Tue", "time": "6:00 PM", "end_time": "10:00 PM", "event_name": "HYPE Cannes | Hyperliquid Builders Night @ EthCC[9]", "organizer": "By Hype Global & Thomas | Hyperliquid FR", "location": "X — shown upon approval", "status": "Waitlist", "link": "https://lu.ma/sh753twy", "tags": "BD, DEV", "VC_score": 0.0, "BD_score": 2.3, "MKT_score": 0.0, "DEV_score": 2.0, "FOUNDER_score": 0.0}, {"date": "Mar 31, 2026", "day": "Tue", "time": "6:00 PM", "end_time": "9:00 PM", "event_name": "An Evening in Art", "organizer": "By Forgio", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/zbny74xe", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 0.8, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Mar 31, 2026", "day": "Tue", "time": "6:00 PM", "end_time": "12:00 AM", "event_name": "The Supper Club - EthCC Edition", "organizer": "By LI.FI & Tenderly & ChainSecurity", "location": "X — shown upon approval", "status": "Waitlist", "link": "https://lu.ma/96tqhpeg", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 3.5, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Mar 31, 2026", "day": "Tue", "time": "6:00 PM", "end_time": "10:00 PM", "event_name": "Scaling Institutional DeFi: Inner Circle Reception at The Carlton", "organizer": "By OpenCover & Nexus Mutual & Blockaid", "location": "Carlton Cannes, a Regent Hotel", "status": "Waitlist", "link": "https://lu.ma/laka56ie", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 2.5, "BD_score": 3.0, "MKT_score": 0.0, "DEV_score": 3.5, "FOUNDER_score": 1.5}, {"date": "Mar 31, 2026", "day": "Tue", "time": "6:00 PM", "end_time": "9:00 PM", "event_name": "Infinite Games Soirée: EthCC 9 Cannes [Invite-Only]", "organizer": "By Eikyo Ventures & GCRx", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/wd25zymv", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 2.5, "BD_score": 3.5, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.8}, {"date": "Mar 31, 2026", "day": "Tue", "time": "6:00 PM", "end_time": "9:00 PM", "event_name": "RWA Première", "organizer": "By Sascha Roehrer & brice realiz", "location": "Issuers who have tokenized or are about to", "status": "Approval Required", "link": "https://lu.ma/61721s3h", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 1.0, "MKT_score": 0.0, "DEV_score": 2.0, "FOUNDER_score": 0.0}, {"date": "Mar 31, 2026", "day": "Tue", "time": "6:00 PM", "end_time": "9:00 PM", "event_name": "Vaulted Networking Soirée | By Altura & Vess3l", "organizer": "By Giorgio Filippi & Louie Rice & Ranveer Arora", "location": "What: Open bar, bites, great conversations and sunset hour!", "status": "Approval Required", "link": "https://lu.ma/1ww8e5hb", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 5.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Mar 31, 2026", "day": "Tue", "time": "6:00 PM", "end_time": "9:00 PM", "event_name": "ETH CC VIP Institutional Soirée w/ Halborn, Dfns, Scorechain & Paybis ✨", "organizer": "By Halborn & Dfns HQ & PAYBIS & Scorechain", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/ethccsoiree", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 2.5, "BD_score": 2.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.8}, {"date": "Mar 31, 2026", "day": "Tue", "time": "6:30 PM", "end_time": "10:30 PM", "event_name": "The Ledger Private Members Club — Vault Summit Edition", "organizer": "By The Ledger Club", "location": "X — shown upon approval", "status": "Waitlist", "link": "https://lu.ma/dsc8htnx", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 2.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.8}, {"date": "Mar 31, 2026", "day": "Tue", "time": "7:00 PM", "end_time": "10:00 PM", "event_name": "House of AI: After Dark", "organizer": "By 0G Foundation", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/0g_houseofai_ethcc", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 0.0, "MKT_score": 0.0, "DEV_score": 1.0, "FOUNDER_score": 0.0}, {"date": "Mar 31, 2026", "day": "Tue", "time": "7:00 PM", "end_time": "12:00 AM", "event_name": "Starknet Party", "organizer": "By StarkWare & Starknet Foundation & 🗓 March 31st | 🕖 7PM & When the conference winds down, we’re just getting started.", "location": "If you’d like, you can join the waitlist.", "status": "Waitlist", "link": "https://lu.ma/64odhr7i", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 0.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Mar 31, 2026", "day": "Tue", "time": "8:00 PM", "end_time": "12:00 AM", "event_name": "Palme de DeFi - by Octav, DefiLlama, Trezor, Liquity, & f(x) Protocol", "organizer": "By ATTRIUS - AJ & OCTAV & f(x) Protocol", "location": "March 31, 2026 · The Barrel Pub · Cannes, France", "status": "Approval Required", "link": "https://lu.ma/82yt9dft", "tags": "DEV", "VC_score": 0.0, "BD_score": 1.0, "MKT_score": 0.0, "DEV_score": 3.5, "FOUNDER_score": 0.0}, {"date": "Apr 01, 2026", "day": "Wed", "time": "8:00 AM", "end_time": "9:00 AM", "event_name": "Crypto Outdoor Workout (COW) - EthCC[9], Cannes, 2026", "organizer": "By Wirex & CTRL community", "location": "Street Workout Park Cannes", "status": "Open", "link": "https://lu.ma/nrljqg1n", "tags": "BD", "VC_score": 0.0, "BD_score": 4.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Apr 01, 2026", "day": "Wed", "time": "8:30 AM", "end_time": "9:30 AM", "event_name": "WTG PUMP | The Cannes Beach Workout", "organizer": "By Mike Taylor & Janis Graubins & Matthias Weissl", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/fy6qufmh", "tags": "BD", "VC_score": 0.0, "BD_score": 2.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Apr 01, 2026", "day": "Wed", "time": "9:00 AM", "end_time": "10:30 AM", "event_name": "Physical & Operational Security for Founders and HNWI", "organizer": "By Opsek io & Pablo Sabbatella", "location": "nan", "status": "Approval Required", "link": "https://lu.ma/vmqkimco", "tags": "FOUNDER", "VC_score": 0.0, "BD_score": 0.0, "MKT_score": 0.0, "DEV_score": 1.0, "FOUNDER_score": 3.0}, {"date": "Apr 01, 2026", "day": "Wed", "time": "9:00 AM", "end_time": "11:00 AM", "event_name": "Ledger x Mercuryo x Komainu Padel Tournament", "organizer": "By Ledger & Jaro Popowic & Komainu Marketing", "location": "Mouratoglou Hotel & Resort", "status": "Request To Join", "link": "https://lu.ma/iepl0kzd", "tags": "MKT", "VC_score": 0.0, "BD_score": 1.5, "MKT_score": 2.5, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Apr 01, 2026", "day": "Wed", "time": "9:00 AM", "end_time": "11:00 AM", "event_name": "The DeFi Espresso", "organizer": "By Jonas Delile & 0xDylz & Clément Hecquet & Try it here: https://t.me/otomatobot?start=a_unknown_s_luma", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/g6lvtlka", "tags": "BD, DEV", "VC_score": 0.0, "BD_score": 2.0, "MKT_score": 0.0, "DEV_score": 2.0, "FOUNDER_score": 0.0}, {"date": "Apr 01, 2026", "day": "Wed", "time": "9:00 AM", "end_time": "1:00 PM", "event_name": "OVHcloud x Mobula Builders Breakfast - EthCC", "organizer": "By OVHcloud & Alexandre Al Ajroudi & Omar Abi Issa & Sacha Marcus", "location": "nan", "status": "Approval Required", "link": "https://lu.ma/eitvq35m", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 3.5, "MKT_score": 0.0, "DEV_score": 2.0, "FOUNDER_score": 0.0}, {"date": "Apr 01, 2026", "day": "Wed", "time": "9:00 AM", "end_time": "4:00 PM", "event_name": "Hack Seasons Conference Cannes", "organizer": "By Metaverse Post & Spectrum Nodes", "location": "Maryna Barysheva, CEO, LKI Consulting", "status": "Open", "link": "https://lu.ma/mixer_cannes", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 2.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Apr 01, 2026", "day": "Wed", "time": "9:00 AM", "end_time": "10:00 AM", "event_name": "RedStone Bolt Cannes Run ⚡ - EthCC[9]", "organizer": "By RedStone & Credora & RedStone France & Smerfik Smerfik", "location": "nan", "status": "Open", "link": "https://lu.ma/qrtylk2u", "tags": "BD", "VC_score": 0.0, "BD_score": 3.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Apr 01, 2026", "day": "Wed", "time": "10:00 AM", "end_time": "1:00 PM", "event_name": "Friends of Magna & Kraken Brunch at ETHCC", "organizer": "nan", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/yo1p3vxc", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 3.5, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Apr 01, 2026", "day": "Wed", "time": "10:00 AM", "end_time": "11:30 AM", "event_name": "Free Cannes Walking Tour with Ambire", "organizer": "By Ambire & Ivan Manchev & Nadia | Ambire & Cinesius [Ambire Wallet]", "location": "nan", "status": "Approval Required", "link": "https://lu.ma/402sp7qt", "tags": "BD", "VC_score": 0.0, "BD_score": 2.3, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Apr 01, 2026", "day": "Wed", "time": "10:30 AM", "end_time": "2:30 PM", "event_name": "Padel tournament by Genesis Club x Markchain", "organizer": "By Akina . & Markchain", "location": "ALL IN PADEL Mougins | Club de padel by Jo-Wilfried Tsonga & Thierry Ascione", "status": "Approval Required", "link": "https://lu.ma/26bw6qox", "tags": "BD", "VC_score": 0.0, "BD_score": 2.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Apr 01, 2026", "day": "Wed", "time": "11:00 AM", "end_time": "6:00 PM", "event_name": "✨ Zero Coding With 0G @EthCC 2026 🎧", "organizer": "By 0G Foundation", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/zerocoding_ethcc2026", "tags": "DEV", "VC_score": 0.0, "BD_score": 1.5, "MKT_score": 0.0, "DEV_score": 2.0, "FOUNDER_score": 0.0}, {"date": "Apr 01, 2026", "day": "Wed", "time": "11:00 AM", "end_time": "3:00 PM", "event_name": "Babes net Brunch in Cannes 💞", "organizer": "By Camski & Flo Vuong & Octant Labs & Mashal Waqar", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/g8w66acj", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 2.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Apr 01, 2026", "day": "Wed", "time": "11:00 AM", "end_time": "2:00 PM", "event_name": "Investor x Founder Beachclub by Arrakis, Bitpanda, Base, & Uniswap", "organizer": "By Arrakis .", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/zfajmyvb", "tags": "VC, FOUNDER", "VC_score": 2.5, "BD_score": 0.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 3.0}, {"date": "Apr 01, 2026", "day": "Wed", "time": "11:00 AM", "end_time": "1:00 PM", "event_name": "Breakfast with friends by Masterkey VC", "organizer": "By Amit Shilo - Masterkey.vc & Saul (Shauli) Rejwan", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/b9zu5hvw", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 3.0, "BD_score": 2.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Apr 01, 2026", "day": "Wed", "time": "11:00 AM", "end_time": "2:00 PM", "event_name": "THE LOCAL: A Rooftop Brunch for Founders, Funders & Friends", "organizer": "By LO:TECH & Stake Capital & Michael & Mark Vere", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/wbp1fgqd", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 2.5, "BD_score": 3.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 3.0}, {"date": "Apr 01, 2026", "day": "Wed", "time": "11:00 AM", "end_time": "8:00 PM", "event_name": "Privy Home: IRL", "organizer": "By Privy", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/qz2y0cyl", "tags": "BD", "VC_score": 0.0, "BD_score": 2.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Apr 01, 2026", "day": "Wed", "time": "11:30 AM", "end_time": "4:00 PM", "event_name": "Tplus Product Day: Launching the First Decentralized CEX", "organizer": "By TPLUS CX & charco & Eli moser & markus", "location": "X — shown upon approval", "status": "Request To Join", "link": "https://lu.ma/bxqkhyvf", "tags": "BD", "VC_score": 0.0, "BD_score": 2.0, "MKT_score": 0.8, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Apr 01, 2026", "day": "Wed", "time": "1:00 PM", "end_time": "5:00 PM", "event_name": "Côte d'Azur Villa with FP Block", "organizer": "By FP Block & Genzio Media & Agenda (1:00 – 5:00 PM) & 1:00 – 1:45 PM | Check-in, Drinks & Networking", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/6ommq5ao", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 0.8, "MKT_score": 2.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Apr 01, 2026", "day": "Wed", "time": "2:00 PM", "end_time": "5:00 PM", "event_name": "Cannes RealFi Mixer: Where AI Meets RWAs", "organizer": "By Pharos Network & Michelle Kang & Jonathan Gieg & Nihal Maunder", "location": "X — shown upon approval", "status": "Open", "link": "https://lu.ma/5coo3y21", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 3.0, "MKT_score": 0.0, "DEV_score": 1.0, "FOUNDER_score": 0.0}, {"date": "Apr 01, 2026", "day": "Wed", "time": "2:00 PM", "end_time": "5:00 PM", "event_name": "Token Engineering Breakout Session", "organizer": "nan", "location": "Selected teams present real design challenges they are currently facing.", "status": "Open", "link": "https://lu.ma/hb61z6gx", "tags": "DEV", "VC_score": 0.0, "BD_score": 0.0, "MKT_score": 0.0, "DEV_score": 2.7, "FOUNDER_score": 0.0}, {"date": "Apr 01, 2026", "day": "Wed", "time": "3:00 PM", "end_time": "9:00 PM", "event_name": "Wonderland CTF: The Largest CTF in Crypto History", "organizer": "By Lera 0x & Wonderland", "location": "nan", "status": "Open", "link": "https://lu.ma/eo8twkjj", "tags": "DEV", "VC_score": 0.0, "BD_score": 1.0, "MKT_score": 0.0, "DEV_score": 3.0, "FOUNDER_score": 0.0}, {"date": "Apr 01, 2026", "day": "Wed", "time": "4:00 PM", "end_time": "8:00 PM", "event_name": "ArbiLink @ ETHCC Cannes 🇫🇷", "organizer": "nan", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/arbilink-ethcc2026", "tags": "BD", "VC_score": 0.0, "BD_score": 2.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Apr 01, 2026", "day": "Wed", "time": "4:00 PM", "end_time": "6:00 PM", "event_name": "Arc: The Aperitif Hour", "organizer": "nan", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/ArcHour2026", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 0.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Apr 01, 2026", "day": "Wed", "time": "4:00 PM", "end_time": "8:00 PM", "event_name": "EscarGO - Winner or Dinner! Tplus.cx!", "organizer": "By TPLUS CX & charco & Eli moser & markus", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/fj8wmp5l", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 2.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Apr 01, 2026", "day": "Wed", "time": "4:00 PM", "end_time": "7:00 PM", "event_name": "The DeFi Rendezvous: Where Lending Meets Perpetuals", "organizer": "By DeFi Saver & LI.FI & Natasha B", "location": "nan", "status": "Approval Required", "link": "https://lu.ma/8tfs6djo", "tags": "DEV", "VC_score": 0.0, "BD_score": 1.0, "MKT_score": 0.0, "DEV_score": 2.0, "FOUNDER_score": 0.0}, {"date": "Apr 01, 2026", "day": "Wed", "time": "4:00 PM", "end_time": "6:30 PM", "event_name": "Lightning Strike ⚡️ Boxing Workout - EthCC Cannes", "organizer": "By Sheraz Ahmed & STORM Partners", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/3vkvbskh", "tags": "BD", "VC_score": 0.0, "BD_score": 5.5, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Apr 01, 2026", "day": "Wed", "time": "4:30 PM", "end_time": "6:00 PM", "event_name": "REE Workshop: Build with Reproducible Execution", "organizer": "By Chloe Sanham | Gensyn", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/ETHCC-REE", "tags": "DEV", "VC_score": 0.0, "BD_score": 0.0, "MKT_score": 0.0, "DEV_score": 2.5, "FOUNDER_score": 0.0}, {"date": "Apr 01, 2026", "day": "Wed", "time": "5:00 PM", "end_time": "10:30 PM", "event_name": "[not crypto] Art Night", "organizer": "By 1inch & P2P.org", "location": "X — shown upon approval", "status": "Waitlist", "link": "https://lu.ma/notcryptoArtNight_Cannes", "tags": "BD", "VC_score": 0.0, "BD_score": 2.6, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Apr 01, 2026", "day": "Wed", "time": "5:00 PM", "end_time": "8:30 PM", "event_name": "Infinite Privacy: Cocktail Aperitivo ZK, FHE or TEE? feat. ZCash, fhenix, ZiskVM (Jordi Baylina), Miden, Bermuda", "organizer": "By Jan Philipp Fritsche & Hana Yoosuf | Oak Security", "location": "X — shown upon approval", "status": "Waitlist", "link": "https://lu.ma/by5hcste", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 2.0, "MKT_score": 0.0, "DEV_score": 2.0, "FOUNDER_score": 0.0}, {"date": "Apr 01, 2026", "day": "Wed", "time": "5:00 PM", "end_time": "7:00 PM", "event_name": "The Riviera Reception with Blockaid", "organizer": "By Blockaid & Tom Gillingham & Cameron R & Tommaso Galantini", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/fbny0x4b", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 2.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Apr 01, 2026", "day": "Wed", "time": "11:30 AM", "end_time": "12:30 PM", "event_name": "The Future of the Agent Economy: How Protocols Like x402 and ERC-8004 Will Build an Autonomous World", "organizer": "By Kye Gomez & Jaenan Swarms", "location": "📍 Location: Palais des Festivals et des Congrès, Taylor Stage (4th Floor WS)", "status": "Open", "link": "https://lu.ma/3jcs4b61", "tags": "BD", "VC_score": 0.0, "BD_score": 2.0, "MKT_score": 0.0, "DEV_score": 1.0, "FOUNDER_score": 0.0}, {"date": "Apr 01, 2026", "day": "Wed", "time": "6:00 PM", "end_time": "10:00 PM", "event_name": "🌊 Latitude Party @ EthCC[9]", "organizer": "By Latitude.sh", "location": "Where bare metal meets the beach 🍹", "status": "Approval Required", "link": "https://lu.ma/dmfhmyr3", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 1.5, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Apr 01, 2026", "day": "Wed", "time": "6:00 PM", "end_time": "8:00 PM", "event_name": "Digital Art Showcase – ETHCC Cannes Side Event | Fundraising for Médecins Sans Frontières", "organizer": "By Flora Candardjis", "location": "nan", "status": "Approval Required", "link": "https://lu.ma/u1b5oqax", "tags": "VC, BD", "VC_score": 2.5, "BD_score": 2.3, "MKT_score": 1.5, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Apr 01, 2026", "day": "Wed", "time": "6:00 PM", "end_time": "9:00 PM", "event_name": "Villa BitGo at ETH CC", "organizer": "nan", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/5p7pjj5w", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 0.8, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Apr 01, 2026", "day": "Wed", "time": "6:00 PM", "end_time": "9:00 PM", "event_name": "Proof Of Liquidity: VIP Dinner by Yield Network, INK, DIA Oracles, Funders VC and STS Digital", "organizer": "By Yield Network & Ink Foundation & Funders VC & DIA", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/g6ui6zuo", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 4.5, "BD_score": 5.0, "MKT_score": 0.0, "DEV_score": 4.0, "FOUNDER_score": 0.8}, {"date": "Apr 01, 2026", "day": "Wed", "time": "6:00 PM", "end_time": "11:00 PM", "event_name": "DeFi in the Sky 3.0", "organizer": "By Makina & Leo & Caruso Caruso", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/6leb012l", "tags": "DEV", "VC_score": 0.0, "BD_score": 1.0, "MKT_score": 0.0, "DEV_score": 2.0, "FOUNDER_score": 0.0}, {"date": "Apr 01, 2026", "day": "Wed", "time": "6:00 PM", "end_time": "8:00 PM", "event_name": "B€€R. Euros. DeFi.", "organizer": "By Tekrox.eth & Eurooo.xyz & Partners & Sponsors", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/mznyc1io", "tags": "BD, DEV", "VC_score": 0.0, "BD_score": 3.5, "MKT_score": 0.0, "DEV_score": 2.0, "FOUNDER_score": 0.0}, {"date": "Apr 01, 2026", "day": "Wed", "time": "6:30 PM", "end_time": "8:30 PM", "event_name": "Founder X VC Happy Hour @EthCC[9] Cannes🇫🇷 2026", "organizer": "By Capvise Group & Sahil (TG:@sahilxdev)", "location": "Cannes", "status": "Approval Required", "link": "https://lu.ma/izthf97x", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 3.0, "BD_score": 3.5, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 3.0}, {"date": "Apr 01, 2026", "day": "Wed", "time": "6:30 PM", "end_time": "10:30 PM", "event_name": "(ai)RL: EthCC - Evening Mixer hosted by Gensyn", "organizer": "By Chloe Sanham | Gensyn & APR & 1 & Wednesday, April 1", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/aiRLETHCC", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 4.5, "MKT_score": 0.0, "DEV_score": 1.0, "FOUNDER_score": 0.0}, {"date": "Apr 01, 2026", "day": "Wed", "time": "7:00 PM", "end_time": "10:00 PM", "event_name": "Cannes After Hours: Builders + Security @ EthCC", "organizer": "By Sherlock", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/397vh9td", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 2.3, "MKT_score": 0.0, "DEV_score": 3.0, "FOUNDER_score": 0.0}, {"date": "Apr 01, 2026", "day": "Wed", "time": "7:00 PM", "end_time": "11:00 PM", "event_name": "Apéro Decentralisé", "organizer": "By Arthursw.eth & DeFi France & Ethereum France & Disaque Eth", "location": "X — shown upon approval", "status": "Waitlist", "link": "https://lu.ma/vzbeczdv", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 0.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Apr 01, 2026", "day": "Wed", "time": "7:30 PM", "end_time": "9:30 PM", "event_name": "Selini Capital x Areta: EthCC Dinner", "organizer": "By Areta & Selini Capital & Jan-Philip Grabs & Christophe de la Celle", "location": "Cannes, Provence-Alpes-Côte d'Azur", "status": "Sold Out", "link": "https://lu.ma/hgu74uvj", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 1.0, "BD_score": 3.5, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Apr 01, 2026", "day": "Wed", "time": "7:30 PM", "end_time": "10:30 PM", "event_name": "SAVE THE DATE | Private Dinner with Pod Network @ Eth CC", "organizer": "By pod network & Nikos Karamangiolis & Shresth Agrawal", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/ng9uach4", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 5.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.8}, {"date": "Apr 01, 2026", "day": "Wed", "time": "7:30 PM", "end_time": "10:30 PM", "event_name": "Lido Institutional - EthCC VIP Dinner", "organizer": "nan", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/gjmykyt8", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 2.5, "BD_score": 3.5, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.8}, {"date": "Apr 01, 2026", "day": "Wed", "time": "9:30 PM", "end_time": "12:30 AM", "event_name": "UK Cabal & Friends: ABSOLUTE SCENES KARAOKE 🎤", "organizer": "By Natasha Fawn & proofofjake", "location": "X — shown upon approval", "status": "Request To Join", "link": "https://lu.ma/7qe6c7z6", "tags": "BD", "VC_score": 0.0, "BD_score": 2.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Apr 02, 2026", "day": "Thu", "time": "8:30 AM", "end_time": "11:00 AM", "event_name": "Fun Run with Gnosis", "organizer": "By Carolina, Gnosis & Bijan & Ondrej Pilny", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/ddwd6iqv", "tags": "BD", "VC_score": 0.0, "BD_score": 2.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Apr 02, 2026", "day": "Thu", "time": "9:00 AM", "end_time": "10:00 AM", "event_name": "Quote 5km Seaside Liquidity Run | EthCC", "organizer": "nan", "location": "X — shown upon approval", "status": "Waitlist", "link": "https://lu.ma/lg449o0o", "tags": "BD", "VC_score": 0.0, "BD_score": 3.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Apr 02, 2026", "day": "Thu", "time": "9:30 AM", "end_time": "1:00 PM", "event_name": "Pitchathon at EthCC[9]", "organizer": "By KRYPTOSPHERE® FRANCE & Ryan Chakache & Louis Piallat & Alexandre Mangin", "location": "Palace of Festivals and Congresses of Cannes", "status": "Approval Required", "link": "https://lu.ma/ph3owbou", "tags": "FOUNDER", "VC_score": 0.0, "BD_score": 1.5, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 2.0}, {"date": "Apr 02, 2026", "day": "Thu", "time": "9:30 AM", "end_time": "10:30 AM", "event_name": "The Post-Conf Run", "organizer": "By fricoben", "location": "Street Workout Park Cannes", "status": "Open", "link": "https://lu.ma/9fcuio9w", "tags": "BD", "VC_score": 0.0, "BD_score": 2.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Apr 02, 2026", "day": "Thu", "time": "9:30 AM", "end_time": "6:00 PM", "event_name": "Pragma Cannes 2026", "organizer": "By ETHGlobal", "location": "X — shown upon approval", "status": "Open", "link": "https://lu.ma/pragma-cannes2026", "tags": "BD", "VC_score": 0.0, "BD_score": 2.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Apr 02, 2026", "day": "Thu", "time": "10:00 AM", "end_time": "1:00 PM", "event_name": "Cafe Cursor Cannes", "organizer": "By Aleksandar Hadžibabić", "location": "X — shown upon approval", "status": "Request To Join", "link": "https://lu.ma/hswzhn5m", "tags": "BD", "VC_score": 0.0, "BD_score": 2.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Apr 02, 2026", "day": "Thu", "time": "10:00 AM", "end_time": "1:00 PM", "event_name": "Chess Yearnament", "organizer": "By engn33r & Yearn", "location": "Le Hive Bar & Restaurant", "status": "Open", "link": "https://lu.ma/jpcdtq5u", "tags": "BD", "VC_score": 0.0, "BD_score": 2.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Apr 02, 2026", "day": "Thu", "time": "10:00 AM", "end_time": "11:30 AM", "event_name": "Free Cannes Walking Tour with Ambire", "organizer": "By Ambire & Ivan Manchev & Nadia | Ambire & Cinesius [Ambire Wallet]", "location": "Palace of Festivals and Congresses of Cannes", "status": "Approval Required", "link": "https://lu.ma/3z5e9ri8", "tags": "BD", "VC_score": 0.0, "BD_score": 2.3, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Apr 02, 2026", "day": "Thu", "time": "11:00 AM", "end_time": "3:00 PM", "event_name": "👩🏻💻 Builders Villa by 0G @EthCC", "organizer": "By 0G Foundation", "location": "Cannes, Provence-Alpes-Côte d'Azur", "status": "Approval Required", "link": "https://lu.ma/buildersvilla_ethcc2026", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 2.3, "MKT_score": 0.0, "DEV_score": 2.0, "FOUNDER_score": 0.0}, {"date": "Apr 02, 2026", "day": "Thu", "time": "11:00 AM", "end_time": "3:00 PM", "event_name": "Vault Ecosystem Brunch", "organizer": "By DeFi Founders Club & Timon & Fusion by IPOR & Kevin Schellinger", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/b9ieeqyb", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 3.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 3.0}, {"date": "Apr 02, 2026", "day": "Thu", "time": "12:00 PM", "end_time": "5:00 PM", "event_name": "Cointelegraph Connect: Cannes Edition", "organizer": "By Cointelegraph Accelerator & Cointelegraph", "location": "Canopy by Hilton Cannes", "status": "Approval Required", "link": "https://lu.ma/z7gy1iax", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 1.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Apr 02, 2026", "day": "Thu", "time": "2:00 PM", "end_time": "8:00 PM", "event_name": "Private Garden Party", "organizer": "By Oasis Network & Flare & iExec", "location": "Canopy by Hilton Cannes", "status": "Approval Required", "link": "https://lu.ma/wyclm16s", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 0.8, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.8}, {"date": "Apr 02, 2026", "day": "Thu", "time": "2:00 PM", "end_time": "5:00 PM", "event_name": "Pétanque | Espresso at EthCC", "organizer": "By Espresso Systems", "location": "Cannes, Provence-Alpes-Côte d'Azur", "status": "Approval Required", "link": "https://lu.ma/espressopetanque", "tags": "BD", "VC_score": 0.0, "BD_score": 2.5, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Apr 02, 2026", "day": "Thu", "time": "2:30 PM", "end_time": "5:00 PM", "event_name": "DFC Pitch Club", "organizer": "By DeFi Founders Club & Timon & Nathan Vandy", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/bifc382v", "tags": "FOUNDER", "VC_score": 1.0, "BD_score": 0.0, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 5.0}, {"date": "Apr 02, 2026", "day": "Thu", "time": "4:00 PM", "end_time": "9:00 PM", "event_name": "DeFi Founders Club: Cannes", "organizer": "By DeFi Founders Club & 1delta", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/dajkw11w", "tags": "DEV, FOUNDER", "VC_score": 0.0, "BD_score": 1.0, "MKT_score": 0.0, "DEV_score": 2.0, "FOUNDER_score": 3.0}, {"date": "Apr 02, 2026", "day": "Thu", "time": "5:00 PM", "end_time": "8:30 PM", "event_name": "EthCC[9] Pre-afterparty: 🧀 Cheese & Wine 🍷 w/ ChainSecurity & Frankencoin", "organizer": "By Frankencoin Association & ChainSecurity", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/maf3arn9", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 4.5, "MKT_score": 0.0, "DEV_score": 0.0, "FOUNDER_score": 0.0}, {"date": "Apr 02, 2026", "day": "Thu", "time": "5:00 PM", "end_time": "8:00 PM", "event_name": "xStocks Hackathon: Code & Coast Closing Party", "organizer": "By Kraken", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/xstocks-hackathon-closing-party", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 0.0, "MKT_score": 0.0, "DEV_score": 5.0, "FOUNDER_score": 0.0}, {"date": "Apr 02, 2026", "day": "Thu", "time": "7:30 PM", "end_time": "10:30 PM", "event_name": "Private DeFi Soiréee", "organizer": "By DeFi Founders Club & Timon & Baltex Partners", "location": "X — shown upon approval", "status": "Approval Required", "link": "https://lu.ma/eakf141l", "tags": "VC, BD, MKT, DEV, FOUNDER", "VC_score": 0.0, "BD_score": 5.5, "MKT_score": 0.0, "DEV_score": 2.0, "FOUNDER_score": 3.8}];
+const XLSX_B64 = "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";
+
+const DATES = ['Mar 28, 2026','Mar 29, 2026','Mar 30, 2026','Mar 31, 2026','Apr 01, 2026','Apr 02, 2026'];
+const DAY_NAMES = ['Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu'];
+
+let activeDay = 'ALL';
+let activeTag = 'ALL';
+
+function setTagFilter(tag) {
+  activeTag = tag;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tag' + tag).classList.add('active');
+  render();
+}
+
+function setDay(day) {
+  activeDay = day;
+  document.querySelectorAll('.day-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('daytab-' + day.replace(/\s/g,'_').replace(/,/g,'')).classList.add('active');
+  render();
+}
+
+function getStatusClass(status) {
+  if (!status) return 'status-open';
+  if (status === 'Sold Out') return 'status-sold-out';
+  if (status === 'Waitlist') return 'status-waitlist';
+  if (status === 'Approval Required') return 'status-approval';
+  if (status === 'Request To Join') return 'status-request';
+  if (status === 'Closed') return 'status-closed';
+  return 'status-open';
+}
+
+function buildDayTabs() {
+  const tabs = document.getElementById('dayTabs');
+  let allCount = EVENTS.length;
+  let html = `<div class="day-tab active" id="daytab-ALL" onclick="setDay('ALL')">All Days <span class="count">${allCount}</span></div>`;
+  DATES.forEach((d, i) => {
+    const c = EVENTS.filter(e => e.date === d).length;
+    const id = 'daytab-' + d.replace(/\s/g,'_').replace(/,/g,'');
+    html += `<div class="day-tab" id="${id}" onclick="setDay('${d}')">${DAY_NAMES[i]} · ${d.split(' ').slice(0,2).join(' ')} <span class="count">${c}</span></div>`;
+  });
+  tabs.innerHTML = html;
+}
+
+function buildStats() {
+  const bar = document.getElementById('statsBar');
+  const total = EVENTS.length;
+  const soldOut = EVENTS.filter(e => e.status === 'Sold Out').length;
+  const waitlist = EVENTS.filter(e => e.status === 'Waitlist').length;
+  const approval = EVENTS.filter(e => e.status === 'Approval Required').length;
+  const byTag = {};
+  ['VC','BD','MKT','DEV','FOUNDER'].forEach(t => {
+    byTag[t] = EVENTS.filter(e => e.tags && e.tags.includes(t)).length;
+  });
+
+}
+
+function tagBadge(tag) {
+  const cls = 'tag-' + tag.toLowerCase();
+  return `<span class="tag ${cls}">${tag}</span>`;
+}
+
+function scoreBar(score, color) {
+  const pct = Math.min(score / 5 * 100, 100);
+  return `<div class="score-bar-track"><div class="score-bar-fill" style="width:${pct}%;background:${color}"></div></div>`;
+}
+
+function render() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const status = document.getElementById('statusFilter').value;
+  const sort = document.getElementById('sortBy').value;
+
+  let filtered = EVENTS.filter(e => {
+    if (activeDay !== 'ALL' && e.date !== activeDay) return false;
+    if (activeTag !== 'ALL' && (!e.tags || !e.tags.includes(activeTag))) return false;
+    if (status !== 'ALL' && e.status !== status) return false;
+    if (q && !e.event_name.toLowerCase().includes(q) && !e.organizer.toLowerCase().includes(q)) return false;
+    return true;
+  });
+
+  // Sort
+  if (sort === 'vc') filtered.sort((a,b) => b.VC_score - a.VC_score);
+  else if (sort === 'bd') filtered.sort((a,b) => b.BD_score - a.BD_score);
+  else if (sort === 'mkt') filtered.sort((a,b) => b.MKT_score - a.MKT_score);
+  else if (sort === 'dev') filtered.sort((a,b) => b.DEV_score - a.DEV_score);
+  else if (sort === 'founder') filtered.sort((a,b) => b.FOUNDER_score - a.FOUNDER_score);
+
+  document.getElementById('totalBadge').textContent = filtered.length + ' Events';
+
+  const grid = document.getElementById('eventsGrid');
+  if (!filtered.length) {
+    grid.innerHTML = `<div class="no-results"><div class="icon">🔍</div><h3>No events found</h3><p>Try adjusting your filters</p></div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map((e, i) => {
+    const tags = e.tags ? e.tags.split(',').map(t => t.trim()).filter(Boolean) : [];
+    const timeStr = e.end_time ? `${e.time} – ${e.end_time}` : e.time;
+    const scores = [
+      { key: 'VC', val: e.VC_score, color: 'var(--vc)' },
+      { key: 'BD', val: e.BD_score, color: 'var(--bd)' },
+      { key: 'MKT', val: e.MKT_score, color: 'var(--mkt)' },
+      { key: 'DEV', val: e.DEV_score, color: 'var(--dev)' },
+      { key: '★', val: e.FOUNDER_score, color: 'var(--founder)' },
+    ].filter(s => s.val > 0);
+    
+    const orgStr = e.organizer && e.organizer !== 'nan' ? e.organizer : '';
+    const locStr = e.location && e.location !== 'nan' && e.location !== 'X — shown upon approval'
+      ? `<div class="event-location">📍 ${e.location}</div>` : '';
+
+    const topScore = [...scores].sort((a,b) => b.val - a.val)[0];
+    const accentColor = topScore ? topScore.color : 'var(--accent)';
+    
+    return `<div class="event-card" style="animation-delay:${(i%20)*20}ms">
+      <div class="card-top">
+        <span class="event-time">⏱ ${timeStr}</span>
+        <span class="status-badge ${getStatusClass(e.status)}">${e.status || 'Open'}</span>
+      </div>
+      <div class="event-name">${e.event_name}</div>
+      ${orgStr ? `<div class="event-organizer">${orgStr}</div>` : ''}
+      ${locStr}
+      ${tags.length ? `<div class="tags-row">${tags.map(t => tagBadge(t)).join('')}</div>` : ''}
+      <div class="card-footer">
+        <span style="font-size:11px;color:var(--text-dim)">${e.date} · ${e.day}</span>
+        <a class="card-link" href="${e.link}" target="_blank" rel="noopener">View Event →</a>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function downloadXLSX() {
+  const link = document.createElement('a');
+  link.href = 'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,' + XLSX_B64;
+  link.download = 'EthCC9_Events.xlsx';
+  link.click();
+}
+
+buildStats();
+buildDayTabs();
+setTagFilter('ALL');
+render();
+</script>
+</body>
+</html>
